@@ -19,12 +19,12 @@ export default function ViewRoutesScreen() {
   }, []);
 
   const deleteRoute = async (id: string) => {
-    await deleteDoc(doc(db, "busRoutes", id));
+    await deleteDoc(doc(db, "buses", id));
     fetchRoutes();
   };
 
   const fetchRoutes = async () => {
-    const querySnapshot = await getDocs(collection(db, "busRoutes"));
+    const querySnapshot = await getDocs(collection(db, "buses"));
     const routeList = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),

@@ -99,11 +99,12 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: "bold",
     color: "white",
     textAlign: "center",
-    marginBottom: 30,
+    marginBottom: 35,
+    letterSpacing: 0.5,
   },
 
   analyticsCard: {
@@ -129,12 +130,23 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "white",
     padding: 18,
-    borderRadius: 14,
-    marginBottom: 15,
+    borderRadius: 16,
+    marginBottom: 18,
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 4.65,
+
+    elevation: 6,
   },
 
   cardText: {
-    fontSize: 18,
-    fontWeight: "600",
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#0A2A66",
   },
 });

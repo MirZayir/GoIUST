@@ -2,12 +2,12 @@ import { db } from "@/firebaseConfig";
 import { addDoc, collection } from "firebase/firestore";
 import React, { useState } from "react";
 import {
-    Alert,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 export default function ManageRoutesScreen() {
   const [route, setRoute] = useState("");
@@ -20,7 +20,7 @@ export default function ManageRoutesScreen() {
     }
 
     try {
-      await addDoc(collection(db, "busRoutes"), {
+      await addDoc(collection(db, "buses"), {
         routeName: route,
         busTime: time,
         createdAt: new Date(),
