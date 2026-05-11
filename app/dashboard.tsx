@@ -1,16 +1,38 @@
 import { router } from "expo-router";
 import { signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+
 import {
   Alert,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { auth } from "../firebaseConfig";
+
+import { auth, db } from "../firebaseConfig";
 
 export default function DashboardScreen() {
-  // Moved handleLogout inside the component and fixed the missing closing brackets
+  const [studentData, setStudentData] = useState<any>(null);
+
+  const fetchStudentData = async () => {
+    try {
+      const studentRef = doc(db, "users", "student_001");
+      const studentSnap = await getDoc(studentRef);
+
+      if (studentSnap.exists()) {
+        useState<any>(null);
+      }
+    } catch (error) {
+      console.log("Firebase Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchStudentData();
+  }, []);
   const handleLogout = async () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
       { text: "Cancel", style: "cancel" },
@@ -29,8 +51,35 @@ export default function DashboardScreen() {
       style={styles.container}
       contentContainerStyle={{ paddingBottom: 80 }}
     >
-      <Text style={styles.welcomeText}>Welcome back 👋</Text>
-      <Text style={styles.title}>Student Dashboard 🚍</Text>
+      <Text style={styles.welcomeText}>
+        Welcome, {studentData?.name || "Student"} 👋
+      </Text>
+
+      <Text style={styles.infoText}>
+        Assigned Bus: {studentData?.assignedBus || "Loading..."}
+      </Text>
+
+      <Text style={styles.infoText}>
+        Pickup Stop: {studentData?.pickupStop || "Loading..."}
+      </Text>
+      <Text style={styles.title}>IUST Smart Transport 🚍</Text>
+      <View style={styles.statusCard}>
+        <Text style={styles.statusTitle}>Live Bus Status</Text>
+
+        <Text style={styles.statusText}>
+          Bus: {studentData?.assignedBus || "Loading..."}
+        </Text>
+
+        <Text style={styles.statusText}>
+          Pickup: {studentData?.pickupStop || "Loading..."}
+        </Text>
+
+        <Text style={styles.statusText}>Status: On Route 🟢</Text>
+
+        <Text style={styles.statusText}>ETA: 12 mins</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Quick Access</Text>
 
       <TouchableOpacity
         style={styles.card}
@@ -110,6 +159,35 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
+  statusCard: {
+    backgroundColor: "#163D8C",
+    padding: 20,
+    borderRadius: 18,
+    marginBottom: 25,
+    borderWidth: 1,
+    borderColor: "#2D5BBF",
+  },
+
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white",
+    marginBottom: 15,
+  },
+
+  statusTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white",
+    marginBottom: 12,
+  },
+
+  statusText: {
+    fontSize: 16,
+    color: "#E8F0FF",
+    marginBottom: 6,
+  },
+
   container: {
     flex: 1,
     backgroundColor: "#0A2A66",
@@ -132,14 +210,30 @@ const styles = StyleSheet.create({
 
   card: {
     backgroundColor: "white",
-    padding: 18,
-    borderRadius: 14,
-    marginBottom: 15,
+    padding: 20,
+    borderRadius: 18,
+    marginBottom: 16,
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+
+    elevation: 4,
   },
 
   welcomeText: {
     fontSize: 18,
     color: "#E0E0E0",
     marginBottom: 5,
+  },
+
+  infoText: {
+    fontSize: 16,
+    color: "#D9E6FF",
+    marginBottom: 4,
   },
 });

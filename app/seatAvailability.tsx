@@ -1,11 +1,17 @@
-import { doc, getDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 export default function SeatAvailabilityScreen() {
   const [totalSeats, setTotalSeats] = useState(0);
   const [occupiedSeats, setOccupiedSeats] = useState(0);
+  const [busData, setBusData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    fetchSeatData();
+  }, []);
 
   useEffect(() => {
     fetchSeatData();
@@ -13,18 +19,25 @@ export default function SeatAvailabilityScreen() {
 
   const fetchSeatData = async () => {
     try {
-      const seatDoc = await getDoc(doc(db, "busData", "mainBus"));
+      const busRef = doc(db, "buses", "bus_001");
+      const busSnap = await getDoc(busRef);
 
-      if (seatDoc.exists()) {
-        const data = seatDoc.data();
-
-        setTotalSeats(data.totalSeats || 40);
-        setOccupiedSeats(data.occupiedSeats || 0);
+      if (busSnap.exists()) {
+        setBusData(busSnap.data());
       }
     } catch (error) {
-      console.log(error);
+      console.log("Seat Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading seat availability...</Text>
+      </View>
+    );
+  }
 
   const availableSeats = totalSeats - occupiedSeats;
 
@@ -33,13 +46,19 @@ export default function SeatAvailabilityScreen() {
       <Text style={styles.title}>Seat Availability 💺</Text>
 
       <View style={styles.card}>
-        <Text style={styles.info}>Total Seats: {totalSeats}</Text>
-        <Text style={styles.info}>Occupied Seats: {occupiedSeats}</Text>
-        <Text style={styles.info}>Available Seats: {availableSeats}</Text>
+        <Text style={styles.info}>Bus Number: {busData?.busNumber}</Text>
 
-        <Text style={styles.status}>
-          {availableSeats > 0 ? "Seats Available ✅" : "Bus Full ❌"}
+        <Text style={styles.info}>Total Capacity: {busData?.capacity}</Text>
+
+        <Text style={styles.info}>
+          Occupied Seats: {busData?.occupiedSeats}
         </Text>
+
+        <Text style={styles.info}>
+          Available Seats: {busData?.availableSeats}
+        </Text>
+
+        <Text style={styles.status}>Live Status: {busData?.status}</Text>
       </View>
     </View>
   );
@@ -49,12 +68,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#0A2A66",
-    justifyContent: "center",
     padding: 20,
+    justifyContent: "center",
   },
 
   title: {
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: "bold",
     color: "white",
     textAlign: "center",
@@ -63,20 +82,20 @@ const styles = StyleSheet.create({
 
   card: {
     backgroundColor: "white",
-    padding: 25,
-    borderRadius: 16,
+    padding: 24,
+    borderRadius: 18,
   },
 
   info: {
-    fontSize: 20,
-    marginBottom: 18,
-    fontWeight: "600",
+    fontSize: 18,
+    marginBottom: 14,
+    fontWeight: "500",
   },
 
   status: {
-    marginTop: 20,
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "bold",
-    textAlign: "center",
+    color: "green",
+    marginTop: 10,
   },
 });

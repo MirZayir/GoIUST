@@ -72,6 +72,10 @@ export default function LoginScreen() {
         <Text style={styles.register}>New User? Register Here</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity onPress={() => router.push("/driverLogin")}>
+        <Text style={styles.adminText}>Driver Login 🚌</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity onPress={() => router.push("/adminLogin")}>
         <Text style={styles.register}>Admin Login 👨‍💼</Text>
       </TouchableOpacity>
@@ -125,6 +129,12 @@ const styles = StyleSheet.create({
   },
   register: {
     color: "#FFD700",
+    textAlign: "center",
+    marginTop: 15,
+    fontWeight: "bold",
+  },
+  adminText: {
+    color: "#DCE6FF",
     textAlign: "center",
     marginTop: 15,
     fontWeight: "bold",

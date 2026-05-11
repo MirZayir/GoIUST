@@ -1,11 +1,7 @@
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import {
-  collection,
-  doc,
-  getDocs,
-  updateDoc
-} from "firebase/firestore";
-import { useEffect, useState } from "react";
-import {
+  ActivityIndicator,
   Alert,
   FlatList,
   StyleSheet,
@@ -13,42 +9,55 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
 import { db } from "../firebaseConfig";
 
 export default function ViewReportsScreen() {
   const [reports, setReports] = useState<any[]>([]);
-
-  useEffect(() => {
-    fetchReports();
-  }, []);
+  const [loading, setLoading] = useState(true);
 
   const fetchReports = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "incidentReports"));
-
-      const reportList: any[] = [];
-
-      querySnapshot.forEach((doc) => {
-        reportList.push({
-          id: doc.id,
-          ...doc.data(),
-        });
-      });
-
+      const reportList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       setReports(reportList);
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching reports: ", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const updateStatus = async (id: string) => {
-    await updateDoc(doc(db, "incidentReports", id), {
-      status: "Resolved",
-    });
+  // Run fetch on screen load
+  useEffect(() => {
+    fetchReports();
+  }, []);
 
-    Alert.alert("Success", "Report marked as Resolved ✅");
+  const handleResolveReport = async (id: string) => {
+    try {
+      await updateDoc(doc(db, "incidentReports", id), {
+        status: "Resolved",
+      });
+
+      Alert.alert("Success", "Report marked as Resolved ✅");
+
+      fetchReports();
+    } catch (error) {
+      console.log("Error updating report: ", error);
+      Alert.alert("Error", "Could not resolve the report.");
+    }
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: "center" }]}>
+        <ActivityIndicator size="large" color="white" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Incident Reports ⚠️</Text>
@@ -58,11 +67,22 @@ export default function ViewReportsScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Text style={styles.issue}>{item.issue}</Text>
+            <Text style={styles.issue}>{item.message || item.issue}</Text>
 
-            <TouchableOpacity onPress={() => updateStatus(item.id)}>
-              <Text style={styles.status}>Status: {item.status}</Text>
-            </TouchableOpacity>
+            {item.studentName && (
+              <Text style={styles.detail}>Student: {item.studentName}</Text>
+            )}
+
+            <Text style={styles.status}>Status: {item.status}</Text>
+
+            {item.status !== "Resolved" && (
+              <TouchableOpacity
+                style={styles.resolveButton}
+                onPress={() => handleResolveReport(item.id)}
+              >
+                <Text style={styles.resolveText}>✅ Mark as Resolved</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
       />
@@ -77,7 +97,6 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 60,
   },
-
   title: {
     fontSize: 28,
     fontWeight: "bold",
@@ -85,22 +104,45 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
   },
-
   card: {
     backgroundColor: "white",
     padding: 18,
     borderRadius: 14,
     marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-
   issue: {
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 8,
+    color: "#333",
   },
-
+  detail: {
+    fontSize: 16,
+    color: "#555",
+    marginBottom: 4,
+  },
   status: {
     fontSize: 16,
-    color: "gray",
+    fontWeight: "bold",
+    color: "#0A2A66",
+    marginBottom: 12,
+    marginTop: 4,
+  },
+  resolveButton: {
+    backgroundColor: "#4CAF50",
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 5,
+  },
+  resolveText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });

@@ -1,42 +1,57 @@
-import React, { useState } from "react";
-import {
-    Alert,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { collection, getDocs } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { db } from "../firebaseConfig";
 
-export default function AdminAnnouncementsScreen() {
-  const [message, setMessage] = useState("");
+export default function NotificationsScreen() {
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const sendAnnouncement = () => {
-    if (!message) {
-      Alert.alert("Error", "Please enter announcement");
-      return;
-    }
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "announcements"));
 
-    Alert.alert("Success", "Announcement sent to students 📢");
+        const list = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
-    setMessage("");
-  };
+        setNotifications(list);
+      } catch (error) {
+        console.log("Notification Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: "white", textAlign: "center" }}>
+          Loading notifications...
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Send Announcement 📢</Text>
+      <Text style={styles.title}>Notifications 🔔</Text>
 
-      <TextInput
-        placeholder="Enter announcement"
-        placeholderTextColor="#999"
-        style={styles.input}
-        value={message}
-        onChangeText={setMessage}
+      <FlatList
+        data={notifications}
+        keyExtractor={(item: any) => item.id}
+        renderItem={({ item }: any) => (
+          <View style={styles.card}>
+            <Text style={styles.message}>{item.message}</Text>
+            <Text style={styles.type}>Type: {item.type}</Text>
+          </View>
+        )}
       />
-
-      <TouchableOpacity style={styles.button} onPress={sendAnnouncement}>
-        <Text style={styles.buttonText}>Send Announcement</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -48,31 +63,26 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 60,
   },
-
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: "bold",
     color: "white",
-    marginBottom: 30,
+    textAlign: "center",
+    marginBottom: 25,
   },
-
-  input: {
-    backgroundColor: "#fff",
+  card: {
+    backgroundColor: "white",
     padding: 20,
-    borderRadius: 20,
-    fontSize: 18,
-    marginBottom: 20,
+    borderRadius: 18,
+    marginBottom: 15,
   },
-
-  button: {
-    backgroundColor: "#FFD700",
-    padding: 18,
-    borderRadius: 20,
-    alignItems: "center",
+  message: {
+    fontSize: 17,
+    fontWeight: "600",
+    marginBottom: 8,
   },
-
-  buttonText: {
-    fontSize: 18,
-    fontWeight: "bold",
+  type: {
+    fontSize: 15,
+    color: "gray",
   },
 });

@@ -14,24 +14,26 @@ import { db } from "../firebaseConfig";
 export default function ReportIncidentScreen() {
   const [issue, setIssue] = useState("");
 
-  const submitReport = async () => {
-    if (!issue) {
+  const handleReport = async () => {
+    if (!issue.trim()) {
       Alert.alert("Error", "Please describe the issue");
       return;
     }
 
     try {
       await addDoc(collection(db, "incidentReports"), {
-        issue: issue,
-        timestamp: new Date(),
+        studentName: "Mir Zayir Shabir",
+        message: issue,
         status: "Pending",
+        createdAt: new Date(),
       });
 
-      Alert.alert("Success", "Incident Report Submitted ⚠️");
+      Alert.alert("Success", "Incident reported successfully ⚠️");
+
       setIssue("");
     } catch (error) {
+      console.log("Report Error: ", error);
       Alert.alert("Error", "Failed to submit report");
-      console.log(error);
     }
   };
 
@@ -49,7 +51,7 @@ export default function ReportIncidentScreen() {
         style={styles.input}
       />
 
-      <TouchableOpacity style={styles.button} onPress={submitReport}>
+      <TouchableOpacity style={styles.button} onPress={handleReport}>
         <Text style={styles.buttonText}>Submit Report</Text>
       </TouchableOpacity>
     </View>
@@ -63,7 +65,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
   },
-
   title: {
     fontSize: 30,
     fontWeight: "bold",
@@ -71,7 +72,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 30,
   },
-
   input: {
     backgroundColor: "white",
     padding: 20,
@@ -81,14 +81,12 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     marginBottom: 20,
   },
-
   button: {
     backgroundColor: "#FFD700",
     padding: 16,
     borderRadius: 14,
     alignItems: "center",
   },
-
   buttonText: {
     fontSize: 18,
     fontWeight: "bold",
