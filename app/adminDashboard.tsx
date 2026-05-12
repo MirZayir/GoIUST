@@ -54,7 +54,7 @@ export default function AdminDashboardScreen() {
       contentContainerStyle={styles.scrollContent}
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.title}>Admin Dashboard 👨‍💼</Text>
+      <Text style={styles.title}>Transport Control Center 📊</Text>
 
       <View style={styles.analyticsCard}>
         <Text style={styles.analyticsTitle}>📊 Live Transport Analytics</Text>

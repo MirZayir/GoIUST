@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import QRCode from "react-native-qrcode-svg";
 
 export default function BusPassScreen() {
   return (
@@ -15,7 +16,14 @@ export default function BusPassScreen() {
 
         <Text style={styles.info}>Route: Anantnag → IUST</Text>
 
-        <Text style={styles.status}>Verified ✅</Text>
+        <Text style={styles.status}>Verified Transport Pass ✅</Text>
+
+        <View style={styles.qrContainer}>
+          <QRCode value="MCA-24-02 | Mir Zayir Shabir | IUST-07" size={180} />
+
+          <Text style={styles.qrText}>Scan for Verification</Text>
+          <Text style={styles.footer}>Issued by IUST Transport Office</Text>
+        </View>
 
         <Text style={styles.footer}>Issued by IUST Transport Department</Text>
       </View>
@@ -24,6 +32,18 @@ export default function BusPassScreen() {
 }
 
 const styles = StyleSheet.create({
+  qrContainer: {
+    alignItems: "center",
+    marginTop: 25,
+  },
+
+  qrText: {
+    marginTop: 15,
+    fontSize: 15,
+    color: "gray",
+    fontWeight: "500",
+  },
+
   container: {
     flex: 1,
     backgroundColor: "#0A2A66",

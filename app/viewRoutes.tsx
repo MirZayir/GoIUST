@@ -46,6 +46,9 @@ export default function ViewRoutesScreen() {
       />
 
       <FlatList
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>No notifications yet 🔔</Text>
+        }
         data={routes}
         keyExtractor={(item: any) => item.id}
         renderItem={({ item }: any) => (
@@ -107,5 +110,11 @@ const styles = StyleSheet.create({
   deleteText: {
     color: "red",
     fontWeight: "bold",
+  },
+  emptyText: {
+    color: "white",
+    textAlign: "center",
+    marginTop: 40,
+    fontSize: 16,
   },
 });

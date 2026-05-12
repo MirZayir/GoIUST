@@ -28,6 +28,9 @@ export default function ViewVerifiedStudentsScreen() {
       <Text style={styles.title}>Verified Students 👨‍🎓</Text>
 
       <FlatList
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>No notifications yet 🔔</Text>
+        }
         data={students}
         keyExtractor={(item: any) => item.id}
         renderItem={({ item }: any) => (
@@ -82,5 +85,11 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: "green",
     fontWeight: "600",
+  },
+  emptyText: {
+    color: "white",
+    textAlign: "center",
+    marginTop: 40,
+    fontSize: 16,
   },
 });

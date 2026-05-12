@@ -63,6 +63,9 @@ export default function ViewReportsScreen() {
       <Text style={styles.title}>Incident Reports ⚠️</Text>
 
       <FlatList
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>No notifications yet 🔔</Text>
+        }
         data={reports}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
@@ -143,6 +146,12 @@ const styles = StyleSheet.create({
   resolveText: {
     color: "white",
     fontWeight: "bold",
+    fontSize: 16,
+  },
+  emptyText: {
+    color: "white",
+    textAlign: "center",
+    marginTop: 40,
     fontSize: 16,
   },
 });

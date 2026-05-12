@@ -36,7 +36,7 @@ export default function DriverDashboardScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Driver Dashboard 👨‍✈️</Text>
+      <Text style={styles.title}>Driver Operations Panel 👨‍✈️</Text>
 
       <TouchableOpacity style={styles.button} onPress={updateLocation}>
         <Text style={styles.buttonText}>Update Live Location 📍</Text>

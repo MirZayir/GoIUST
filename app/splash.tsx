@@ -15,9 +15,12 @@ export default function SplashScreen() {
         source={require("../assets/images/logo.png")}
         style={styles.logo}
       />
-      <Text style={styles.title}>IUST Transport App 🚍</Text>
 
-      <Text style={styles.subtitle}>Loading...</Text>
+      <Text style={styles.title}>IUST Smart Transport 🚍</Text>
+
+      <Text style={styles.subtitle}>Smart. Safe. Connected.</Text>
+
+      <Text style={styles.loadingText}>Initializing transport services...</Text>
     </View>
   );
 }
@@ -46,5 +49,11 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 18,
     color: "#DCE6FF",
+    marginBottom: 20,
+  },
+
+  loadingText: {
+    color: "#FFFFFF",
+    fontSize: 15,
   },
 });

@@ -43,6 +43,9 @@ export default function NotificationsScreen() {
       <Text style={styles.title}>Notifications 🔔</Text>
 
       <FlatList
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>No notifications yet 🔔</Text>
+        }
         data={notifications}
         keyExtractor={(item: any) => item.id}
         renderItem={({ item }: any) => (
@@ -84,5 +87,11 @@ const styles = StyleSheet.create({
   type: {
     fontSize: 15,
     color: "gray",
+  },
+  emptyText: {
+    color: "white",
+    textAlign: "center",
+    marginTop: 40,
+    fontSize: 16,
   },
 });
